@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+asyncpg
+pydantic
+python-dotenv
+alembic
+websockets
+pytest
+httpx
