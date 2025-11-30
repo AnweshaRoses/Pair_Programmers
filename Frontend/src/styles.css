@@ -1,0 +1,245 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Home Page */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.home-container h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #4ec9b0;
+}
+
+.home-container p {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  color: #9cdcfe;
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.create-room-section,
+.join-room-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  background-color: #252526;
+  border-radius: 8px;
+  border: 1px solid #3e3e42;
+}
+
+.create-room-section h2,
+.join-room-section h2 {
+  font-size: 1.5rem;
+  color: #4ec9b0;
+  margin-bottom: 0.5rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #858585;
+  font-size: 0.9rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #3e3e42;
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.join-room-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.room-id-input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #1e1e1e;
+  border: 1px solid #3e3e42;
+  border-radius: 4px;
+  color: #d4d4d4;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.room-id-input:focus {
+  border-color: #007acc;
+}
+
+.room-id-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.primary-button:hover:not(:disabled) {
+  background-color: #005a9e;
+}
+
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Room Page */
+.room-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  background-color: #1e1e1e;
+  overflow: hidden;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+  flex-shrink: 0;
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.room-header h2 {
+  color: #4ec9b0;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.room-language {
+  color: #858585;
+  font-size: 0.9rem;
+}
+
+.leave-button {
+  padding: 0.5rem 1rem;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.leave-button:hover {
+  background-color: #b71c1c;
+}
+
+.room-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  position: relative;
+}
+
+/* Code Editor */
+.code-editor-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Loading and Error States */
+.room-loading,
+.room-error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #d4d4d4;
+}
+
+.room-loading p,
+.room-error p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #9cdcfe;
+}
+
+.room-error p {
+  color: #f48771;
+}
+
+.room-error button {
+  padding: 0.75rem 1.5rem;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.room-error button:hover {
+  background-color: #005a9e;
+}
+

@@ -176,3 +176,5 @@ logs/
 *.temp
 tmp/
 temp/
+
+*/node_modules/

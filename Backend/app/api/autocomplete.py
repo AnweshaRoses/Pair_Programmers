@@ -214,7 +214,8 @@ async def autocomplete(req: AutocompleteRequest):
     suggestion = get_smart_suggestion(code, cursor)
     
     # If no suggestion found, provide a helpful default
-    if not suggestion:
-        suggestion = "# Type your code here"
+    if suggestion and suggestion.strip() != "":
+        return {"suggestion": suggestion}
     
-    return {"suggestion": suggestion}
+    # Otherwise, return empty string (no suggestion)
+    return {"suggestion": ""}
