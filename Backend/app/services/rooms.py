@@ -29,3 +29,7 @@ async def save_room_code(db: AsyncSession, room_id: str, code: str):
     if room:
         room.code = code
         await db.commit()
+
+async def get_room_by_room_id(db: AsyncSession, room_id: str) -> Room | None:
+    result = await db.execute(select(Room).where(Room.room_id == room_id))
+    return result.scalar_one_or_none()
