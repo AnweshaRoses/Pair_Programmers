@@ -7,6 +7,9 @@ A full-stack real-time pair-programming web application built with FastAPI, WebS
 
 Two users can join the same coding room, edit code together, and receive AI-style autocomplete suggestions in real time. 
 
+## 📹 Video Walk Through
+
+https://drive.google.com/file/d/1193YqWTgu0OJRqKOIHrAonnIJl-yNGJj/view?usp=sharing
 
 ---
 
