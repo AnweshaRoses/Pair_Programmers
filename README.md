@@ -45,8 +45,7 @@ Two users can join the same coding room, edit code together, and receive AI-styl
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/kube-credential.git
-cd kube-credential
+git clone https://github.com/AnweshaRoses/Pair_Programmers.git
 ```
 
 ### ⚙️ Backend Setup (FastAPI + PostgreSQL)
