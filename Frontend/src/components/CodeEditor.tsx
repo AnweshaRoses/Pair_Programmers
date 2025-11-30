@@ -1,48 +1,59 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import type { Monaco } from "@monaco-editor/react";
+import * as monacoEditor from "monaco-editor";
 import { useAppDispatch, useAppSelector } from "../store";
 import { updateCode, setCursor } from "../store/roomSlice";
 import { getAutocomplete } from "../api/autocomplete";
 
 export default function CodeEditor() {
   const dispatch = useAppDispatch();
-  const { code, language, cursor } = useAppSelector((state) => state.room);
+  const { code: initialCode, language, cursor } = useAppSelector((state) => state.room);
 
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
-
-  const handleEditorChange = useCallback(
-    (value: string | undefined) => {
-      if (value !== undefined && value !== code) {
-        dispatch(updateCode(value));
-      }
-    },
-    [dispatch, code]
-  );
-
-  // ---------------------
-  // DEBOUNCE + AUTOCOMPLETE (NO more auto-insert)
-  // ---------------------
   const debounceTimer = useRef<number | null>(null);
 
+  // local state to avoid Redux overwriting fast typing
+  const [localCode, setLocalCode] = useState(initialCode);
+
+  // sync initial Redux code once
+  useEffect(() => {
+    setLocalCode(initialCode);
+  }, [initialCode]);
+
+  const handleEditorChange = useCallback(
+    (value?: string) => {
+      if (value !== undefined) {
+        setLocalCode(value); // update local state only
+        // debounce Redux update
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+        debounceTimer.current = window.setTimeout(() => {
+          dispatch(updateCode(value));
+        }, 500); // adjust debounce time as needed
+      }
+    },
+    [dispatch]
+  );
+
   const registerAutocomplete = useCallback(
-    (monaco: Monaco, editor: any) => {
+    (monaco: Monaco, editor: monacoEditor.editor.IStandaloneCodeEditor) => {
       monaco.languages.registerCompletionItemProvider(language || "python", {
         triggerCharacters: ["(", ".", ":", " "],
-
-        provideCompletionItems: async () => {
-          const text = editor.getValue();
+        provideCompletionItems: async (
+          model: monacoEditor.editor.ITextModel,
+          position: monacoEditor.Position
+        ) => {
+          const code = model.getValue();
+          const offset = model.getOffsetAt(position);
 
           try {
             const res = await getAutocomplete({
-              code: text,
-              cursorPosition: cursor,
+              code,
+              cursorPosition: offset,
               language: language || "python",
             });
-
-            if (!res.suggestion) return { suggestions: [] };
-
+            if (!res.suggestion?.trim()) return { suggestions: [] };
             return {
               suggestions: [
                 {
@@ -50,39 +61,43 @@ export default function CodeEditor() {
                   kind: monaco.languages.CompletionItemKind.Snippet,
                   insertText: res.suggestion,
                   documentation: "AI suggestion",
+                  insertTextRules:
+                    monaco.languages.CompletionItemInsertTextRule.KeepWhitespace,
                 },
               ],
             };
           } catch (err) {
-            console.error("Autocomplete Error", err);
+            console.error("Autocomplete Error:", err);
             return { suggestions: [] };
           }
         },
       });
     },
-    [cursor, language]
+    [language]
   );
 
   const handleDebouncedAutocomplete = useCallback(
-    (editor: any, monaco: Monaco) => {
-      if (debounceTimer.current) window.clearTimeout(debounceTimer.current);
-
+    (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
       debounceTimer.current = window.setTimeout(() => {
-        // force Monaco to open autocomplete dropdown
         editor.trigger("manual", "editor.action.triggerSuggest", {});
       }, 600);
     },
     []
   );
 
-  const handleEditorDidMount = (editor: any, monaco: Monaco) => {
+  const handleEditorDidMount = (
+    editor: monacoEditor.editor.IStandaloneCodeEditor,
+    monaco: Monaco
+  ) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
 
     registerAutocomplete(monaco, editor);
 
     editor.onDidChangeModelContent(() => {
-      handleDebouncedAutocomplete(editor, monaco);
+      handleEditorChange(editor.getValue());
+      handleDebouncedAutocomplete(editor);
     });
 
     editor.onDidChangeCursorPosition(() => {
@@ -96,13 +111,11 @@ export default function CodeEditor() {
     editor.updateOptions({
       quickSuggestions: true,
       suggestOnTriggerCharacters: true,
-      tabCompletion: "on",            // Accept with TAB
+      tabCompletion: "on",
       acceptSuggestionOnEnter: "off",
-      snippetSuggestions: "inline", 
+      snippetSuggestions: "inline",
     });
   };
-
-  
 
   return (
     <div className="code-editor-container">
@@ -110,7 +123,7 @@ export default function CodeEditor() {
         height="100%"
         width="100%"
         language={language || "python"}
-        value={code}
+        value={localCode} 
         onChange={handleEditorChange}
         onMount={handleEditorDidMount}
         theme="vs-dark"
@@ -124,6 +137,8 @@ export default function CodeEditor() {
     </div>
   );
 }
+
+
 
 
 
